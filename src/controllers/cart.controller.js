@@ -21,13 +21,24 @@ export const add_product_to_cart = async (req, res) => {
         const cart = await Cart.findByPk(cid)
         if (!cart) return res.status(404).json({ status: "failed", message: "No se encontro el carrito" })
 
-        const products = [
-            ...cart.products, { product_id: pid, quantity: quantity }
-        ]
+        let products = [...cart.products];
 
-        const cart_updated = await cart.update({products})
+        const product_in_cart = products.findIndex(p => p.product_id === pid)
+        console.log(product_in_cart);
+        
+        if (product_in_cart !== -1) {
+            products[product_in_cart] = {
+                product_id : pid,
+                quantity : products[product_in_cart].quantity + quantity
+            }
+        } else {
+            products.push({ product_id: pid, quantity: quantity })
+        }
 
-        return res.status(200).json({ status: "success", message: "Producto agregado al carrito exitosamente", payload: cart_updated })
+        const cart_updated = await cart.update({ products })
+        console.log(products);
+        
+        return res.status(200).json({ status: "success", message: "Carrito actualizado exitosamente", payload: cart_updated })
 
     } catch (error) {
         return res.status(500).json({ status: "failed", message: error.message })
@@ -36,14 +47,14 @@ export const add_product_to_cart = async (req, res) => {
 
 export const delete_product_from_cart = async (req, res) => {
     try {
-        const {cid, pid} = req.params;
+        const { cid, pid } = req.params;
 
         const cart = await Cart.findByPk(cid)
         if (!cart) return res.status(404).json({ status: "failed", message: "No se encontro el carrito" })
 
         const products_filtered = cart.products.filter(p => p.product_id !== pid)
 
-        const cart_updated = await cart.update({products: products_filtered})
+        const cart_updated = await cart.update({ products: products_filtered })
 
         return res.status(200).json({ status: "success", message: "Producto eliminado del carrito exitosamente", payload: cart_updated })
 
@@ -59,9 +70,9 @@ export const clear_cart = async (req, res) => {
         const cart = await Cart.findByPk(id)
         if (!cart) return res.status(404).json({ status: "failed", message: "No se encontro el carrito" })
 
-        await cart.update({products:[]})
+        await cart.update({ products: [] })
 
-        return res.status(200).json({status:"success", message:"El carrito se vació exitosamente"})
+        return res.status(200).json({ status: "success", message: "El carrito se vació exitosamente" })
 
     } catch (error) {
         return res.status(500).json({ status: "failed", message: error.message })
