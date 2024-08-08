@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { create_product, delete_product, get_product_by_id, get_products } from "../controllers/product.controller.js";
+import { create_product, delete_product, get_product_by_id, get_products, update_product } from "../controllers/product.controller.js";
 import { is_admin, verify_token } from "../middleware/auth.middleware.js";
 
 export const product_router = Router()
@@ -9,6 +9,7 @@ product_router.use(verify_token)
 
 //Admin routes
 product_router.post('/', is_admin, create_product)
+product_router.put('/:id', is_admin, update_product)
 product_router.delete('/:id', is_admin, delete_product)
 
 //User routes

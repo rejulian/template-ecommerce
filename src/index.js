@@ -5,6 +5,7 @@ import { auth_router } from './routes/auth.router.js';
 import 'dotenv/config'
 import { product_router } from './routes/product.router.js';
 import { category_router } from './routes/category.router.js';
+import { cart_router } from './routes/cart.router.js';
 
 const app = express()
 const PORT = process.env.PORT || 8080
@@ -18,6 +19,7 @@ app.use(cookieParser())
 app.use('/api/v1/auth', auth_router)
 app.use('/api/v1/products', product_router)
 app.use('/api/v1/category', category_router)
+app.use('/api/v1/cart', cart_router)
 app.get('/', (req,res) => {
     res.send('Hello world')
 })
