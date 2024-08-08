@@ -4,13 +4,10 @@ import { is_admin, verify_token } from "../middleware/auth.middleware.js";
 
 export const product_router = Router()
 
-//Middleware
-product_router.use(verify_token)
-
 //Admin routes
-product_router.post('/', is_admin, create_product)
-product_router.put('/:id', is_admin, update_product)
-product_router.delete('/:id', is_admin, delete_product)
+product_router.post('/', verify_token, is_admin, create_product)
+product_router.put('/:id', verify_token, is_admin, update_product)
+product_router.delete('/:id', verify_token, is_admin, delete_product)
 
 //User routes
 product_router.get('/', get_products)

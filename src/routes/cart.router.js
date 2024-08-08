@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { add_product_to_cart, clear_cart, delete_product_from_cart, get_cart_by_id } from "../controllers/cart.controller.js";
+import {verify_token} from '../middleware/auth.middleware.js'
 
 export const cart_router = Router()
 
 //EL CARRITO SE CREA AL MOMENTO DE REGISTRAR UN USUARIO
+
+cart_router.use(verify_token)
 
 cart_router.get('/:id', get_cart_by_id)
 cart_router.post('/:cid/:pid', add_product_to_cart)

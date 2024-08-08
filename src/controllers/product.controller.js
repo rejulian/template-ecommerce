@@ -60,7 +60,7 @@ export const get_products = async (req, res) => {
         const totalPages = Math.ceil(totalProducts / limit);
 
         const nextPage = page < totalPages ? `/api/v1/products?page=${page + 1}` : null
-        const prevPage = page >= totalPages ? `/api/v1/products?page=${page - 1}` : null
+        const prevPage = page > totalPages ? `/api/v1/products?page=${page - 1}` : null
 
         return res.status(200).json({ status: "success", payload: products, pagination: { page, limit, totalPages, nextPage, prevPage } })
 
@@ -101,12 +101,20 @@ export const update_product = async (req, res) => {
             name: name !== undefined ? name : product.name,
             description: description !== undefined ? description : product.description,
             price: price !== undefined ? price : product.price,
-            // categories: categories !== undefined ? categories : product.categories,
             stock: stock !== undefined ? stock : product.stock,
             status: status !== undefined ? stock : product.status
         }
 
         const product_updated = await product.update(data_to_update)
+
+        if (categories && categories.length > 0) {
+            const categoryInstances = await Category.findAll({
+                where: {
+                    id: categories
+                }
+            });
+            product_updated.setCategories(categoryInstances)
+        }
 
         return res.status(200).json({ status: "success", message: "Producto actualizado exitosamente", payload: product_updated })
 

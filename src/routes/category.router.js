@@ -4,9 +4,8 @@ import { is_admin, verify_token } from "../middleware/auth.middleware.js";
 
 export const category_router = Router()
 
-category_router.use(verify_token)
-
 category_router.get('/', get_categories)
-category_router.post('/', is_admin, create_category)
-category_router.put('/:id', is_admin, update_category)
-category_router.delete('/:id', is_admin, delete_category)
+
+category_router.post('/', verify_token, is_admin, create_category)
+category_router.put('/:id', verify_token, is_admin, update_category)
+category_router.delete('/:id', verify_token, is_admin, delete_category)
